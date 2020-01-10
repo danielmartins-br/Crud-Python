@@ -1,25 +1,18 @@
 import sqlite3
 import io
-import terminal-banner
-
-#banner de apresentacao
-banner_text = "Hello!"
-mensagem = terminal_banner.Banner(banner_text)
-print(mensagem)
 
 #conexao BD
 conn = sqlite3.connect('contatos.db')
 #iterador para o BD
 cursor = conn.cursor()
 
-print('\n-------C.R.U.D in Python-------\n')
-print('Selecione uma Opcao: ')
-print('1-> Cadastrar um Contato\n2-> Listar Contatos\n3-> Atualizar Dados\n4-> Deletar Contato\n')
-opcao = input('Opcao Desejada: ')
+def imprime_cabecalho():
+     print("******************************\n")   
+     print("*   C.R.U.D in Python         *\n")
+     print("******************************\n")   
+     return 0
 
-if opcao == "1": 
-    cadastra()
-
+#cria o sql do banco
 def cadastra():
      cursor.execute("""
          CREATE TABLE IF NOT EXISTS contatos (
@@ -52,6 +45,7 @@ def cadastra():
      #gravando dados
      conn.commit()
      print('\nDados Inseridos Com Sucesso!\n')
+     return 0
 
 def listar_cadastros():
      cursor.execute("""
@@ -61,11 +55,12 @@ def listar_cadastros():
      print('-------Contatos Cadastrados------\n')
      for linha in cursor.fetchall():
           print(linha)
+     return 0
 
 def update_cadastro():
      print('-------Atualizar Dados do Contato------\n')
      id_contato = input('Insira o ID do Contato: ')
-
+#TODO criar uma struct ou classe com as variaveis de cadastro, para nao repeti-las
      c_nome = input('\nNome: ')
      c_idade = input('Idade: ')
      c_cpf = input('CPF: ')
@@ -80,6 +75,7 @@ def update_cadastro():
                WHERE id = ?
                """,(c_nome,c_idade,c_cpf,c_email,c_telefone,c_cidade,c_uf,id_contato))
      conn.commit()
+     return 0
 
 def deleta_cadastro():
      id_del = input('ID do contato que deseja DELETAR: ')
@@ -90,17 +86,44 @@ def deleta_cadastro():
                """, (id_del))
      conn.commit()
      print('Contato Deletado!')
+     return 0
 
-def backup():
+def backup_cadastros():
      with io.open('contatos_dump.sql','w') as f:
           for linha in conn.iterdump():
                f.write('%s\n' % linha)
      print('Backup Terminado\n')
-               
+     return 0
+#TODO adicionar verificacao na hora de criar ou importar backup               
 def import_backup():
      f = io.open('contatos_dump.sql', 'r')
      sql = f.read()
      cursor.executescript(sql)
      print('Dados Importados!')
+     return 0
+
+imprime_cabecalho()
+#TODO adicionar um loop para rodar esse bloco enquanto for true
+print('Selecione uma Opcao: \n')
+print('1-> Cadastrar um Contato\n2-> Listar Contatos\n3-> Atualizar Dados\n4-> Deletar Contato')
+print('5-> Fazer Backup dos Contatos\n6-> Importar Backup de Contatos\n0~> Encerrar\n')
+opcao = input('Opcao Desejada: ')
+
+if opcao == "1": 
+    cadastra()
+elif opcao == "2":
+     listar_cadastros()
+elif opcao == "3":
+     update_cadastro()
+elif opcao == "4":
+     deleta_cadastro()
+elif opcao == "5":
+     backup_cadastros()
+elif opcao == "6":
+     import_backup()
+elif opcao == "0":
+     print('Encerrando...\n')
+else:
+     print("\nOpcao Invalida\nEncerrando...")
 
 conn.close()

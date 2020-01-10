@@ -9,7 +9,6 @@ CREATE TABLE contatos (
               cidade TEXT,
               uf VARCHAR(2) NOT NULL
               );
-INSERT INTO "contatos" VALUES(2,'Daniel',20,'11111111111','dm@mail.com','90123356','Trindade','GO');
 INSERT INTO "contatos" VALUES(4,'Vladmyr',0,'89126531091','vlad@mail.com','89120034','Pripyat','RU');
 DELETE FROM "sqlite_sequence";
 INSERT INTO "sqlite_sequence" VALUES('contatos',4);
